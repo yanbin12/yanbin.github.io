@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>翻转式用户登录注册界面设计</title>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<!--[if IE]>
+		<script src="http://libs.baidu.com/html5shiv/3.7/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<!--开始-->
+	<div class="jq22-container" style="padding-top:100px">
+		<p class="biny bin">欢迎您 	<span class="userName"></span></p>
+		<div class="login-wrap">
+			<div class="login-html">
+				<input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+				<input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+				<div class="login-form">
+					<div class="sign-in-htm">
+						<div class="group">
+							<label for="user" class="label">Username</label>
+							<input id="user" type="text" class="input">
+						</div>
+						<div class="group">
+							<label for="pass" class="label">Password</label>
+							<input id="pass" type="password" class="input" data-type="password">
+						</div>
+						<div class="group">
+							<input id="check" type="checkbox" class="check" checked>
+							<label for="check"><span class="icon"></span> Keep me Signed in</label>
+						</div>
+						<div class="group">
+							<input type="submit" class="button" value="Sign In" id="btn">
+						</div>
+						<div class="hr"></div>
+						<div class="foot-lnk">
+							<a href="#forgot">Forgot Password?</a>
+						</div>
+					</div>
+					<div class="sign-up-htm">
+						<div class="group">
+							<label for="user" class="label">Username</label>
+							<input id="user1" type="text" class="input">
+						</div>
+						<div class="group">
+							<label for="pass" class="label">Password</label>
+							<input id="pass1" type="password" class="input" data-type="password">
+						</div>
+						
+						<div class="group">
+							<input type="submit" class="button" value="Sign Up" id="but2">
+						</div>
+						<div class="hr"></div>
+						<div class="foot-lnk">
+							<label for="tab-1">Already Member?</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/jquery-3.2.1.js"></script>
+	<script>
+        const binY=document.querySelector('.biny');
+        const userN=document.querySelector('.userName');
+	ajax({
+	 	url:'http://localhost:8004/keeplogin',
+	 	type:'get',
+	 	success:function(da){
+	 		var json = eval('('+da+')');
+	 		console.log(json);
+	 		if(json.num == 1){
+	 			alert('自动登录成功')
+	 		}
+	 	},
+	 	error:function(){
+	 		
+	 	}
+	 });
+	but2.onclick = function(){
+		if(user1.value == ''){
+			alert('请输入用户名')
+		}else if(pass1.value == ''){
+			alert('请输入用户密码')
+		}else{
+			ajax({
+	 	url:'http://localhost:8004/loginup',
+	 	type:'get',
+	 	data:{
+	 		user:user1.value,
+	 		pass:pass1.value
+	 	},
+	 	success:function(da){
+	 		var json = eval('('+da+')');
+	 		if(json.num == 0){
+	 			alert('用户名已存在')
+	 		}else{
+	 			alert('注册成功')
+	 		}
+	 	},
+	 	error:function(){
+	 		
+	 	}
+	 })
+		}
+		
+	}
+	 btn.onclick = function(){
+		if(user.value == ''){
+			alert('请输入用户名')
+		}else if(pass.value == ''){
+			alert('请输入用户密码')
+		}else{
+			ajax({
+	 	url:'http://localhost:8004/login',
+	 	type:'get',
+	 	data:{
+	 		user:user.value,
+	 		pass:pass.value,
+	 	    check:check.checked
+	 	},
+	 	success:function(da){
+	 		var json = eval('('+da+')');
+	 		if(json.num == 0){
+	 			alert('用户名或密码错误')
+	 		}else{
+	 			alert('登录成功');
+	 			userN.innerHTML=user.value;
+                $('.biny').removeClass('bin');
+                $('.login-wrap').attr('class','bin');
+	 		}
+	 	},
+	 	error:function(){
+	 		
+	 	}
+	 })
+		}
+		
+	}
+	 
+function ajax(req){
+//	console.log(req.data)
+	if(window.XMLHttpRequest){
+				var ajax = new XMLHttpRequest()
+	}else{
+				var ajax = new ActiveXObject( "Microsoft.XMLHTTP" );
+		}
+	if(req.type == 'get'){
+		ajax.open('get',req.url+'?'+strdata(req.data),true);
+		ajax.send()
+	}else{
+		ajax.open('post',req.url,true);
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		ajax.send(strdata(req.data))
+	}
+		ajax.onreadystatechange = function(){
+			if(ajax.readyState == 4){
+				if(ajax.status>=200 && ajax.status<300 || ajax.status == 304){
+					req.success(ajax.responseText)
+//					console.log(ajax.responseText)
+				}else{
+					req.error(ajax.status)
+				}
+				
+			}
+		};
+
+    function strdata(da){
+    	  var arr = [];
+	   for(var i in da){
+		arr.push(i+'='+da[i])
+	  }
+	   var strurl = arr.join('&');
+	   return strurl
+    }
+}
+	</script>
+</body>
+</html>

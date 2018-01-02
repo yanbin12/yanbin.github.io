@@ -1,0 +1,10 @@
+ul{
+	list-style: none;
+	background: lawngreen;
+}
+li{
+	transition: 0.3s;
+}
+ul:hover li{
+	background: yellowgreen;
+}
