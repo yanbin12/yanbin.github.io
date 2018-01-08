@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+user:<input type="text" id="user"/><br>
+pass:<input type="text" id="pass"/><br>
+<button id="btn">登陆</button>
+<button id="btn1">注册</button>
+</body>
+<script>
+
+    btn1.onclick = function(){
+        if(user.value==""||pass.value==""){
+            console.log('注册为空')
+        }else {
+            ajax({
+            url:'http://localhost:8000/user/login',
+            type:'post',
+            data:{
+                user:user.value,
+                pass:pass.value
+            },
+            success:function(da){
+                console.log(da)
+            },
+            error:function(){
+
+            }
+        })
+        }
+
+    };
+    btn.onclick = function(){
+        ajax({
+            url:'http://localhost:8000/user/add',
+            type:'post',
+            data:{
+                user:user.value,
+                pass:pass.value
+            },
+            success:function(da){
+                console.log(da)
+
+            },
+            error:function(){
+
+            }
+        })
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+    function ajax(req){
+//	console.log(req.data)
+        if(window.XMLHttpRequest){
+            var ajax = new XMLHttpRequest()
+        }else{
+            var ajax = new ActiveXObject( "Microsoft.XMLHTTP" );
+        }
+        if(req.type == 'get'){
+            ajax.open('get',req.url+'?'+strdata(req.data),true)
+            ajax.send()
+        }else{
+            ajax.open('post',req.url,true)
+            ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded")
+            ajax.send(strdata(req.data))
+        }
+        ajax.onreadystatechange = function(){
+            if(ajax.readyState == 4){
+                if(ajax.status>=200 && ajax.status<300 || ajax.status == 304){
+                    req.success(ajax.responseText)
+//					console.log(ajax.responseText)
+                }else{
+                    req.error(ajax.status)
+                }
+
+            }
+        };
+
+        function strdata(da){
+            var arr = [];
+            for(var i in da){
+                arr.push(i+'='+da[i])
+            }
+            var strurl = arr.join('&');
+            return strurl
+        }
+    }
+</script>
+</html>
